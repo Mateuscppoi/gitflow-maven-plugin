@@ -118,6 +118,9 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
     @Parameter(property = "skipMergeDevBranch", defaultValue = "false")
     private boolean skipMergeDevBranch = false;
 
+    @Parameter(property = "skipMergeReleaseBranch", defaultValue = "false")
+    private boolean skipMergeReleaseBranch = false;
+
     /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -270,7 +273,9 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
                         mvnSetVersions(releaseBranchVersion);
                         gitCommit(commitMessages.getUpdateReleaseBackPreMergeStateMessage());
                     }
-                } else if (!skipMergeDevBranch) {
+                }
+
+                if (!skipMergeDevBranch) {
                     GitFlowVersionInfo developVersionInfo = new GitFlowVersionInfo(
                             currentVersion);
                     if (notSameProdDevName()) {
@@ -330,9 +335,10 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
                 } else {
                     gitPush(gitFlowConfig.getProductionBranch(), !skipTag);
 
-                    if (StringUtils.isNotBlank(releaseBranch)) {
+                    if (!skipMergeReleaseBranch) {
                         gitPush(releaseBranch, !skipTag);
-                    } else if (StringUtils.isBlank(releaseBranch)
+                    }
+                    if (!skipMergeDevBranch
                             && notSameProdDevName()) { // if no release branch
                         gitPush(gitFlowConfig.getDevelopmentBranch(), !skipTag);
                     }

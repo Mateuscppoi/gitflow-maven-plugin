@@ -30,6 +30,7 @@ public class GitFlowConfig {
     private String releaseBranchPrefix;
     /** Prefix of the hotfix branch. */
     private String hotfixBranchPrefix;
+    private String hotfixSpecificBranchPrefix;
     /** Prefix of the support branch. */
     private String supportBranchPrefix;
     /** Prefix of the version tag. */
@@ -46,6 +47,7 @@ public class GitFlowConfig {
         this.featureBranchPrefix = "feature/";
         this.releaseBranchPrefix = "release/";
         this.hotfixBranchPrefix = "hotfix/";
+        this.hotfixSpecificBranchPrefix = "hf/";
         this.supportBranchPrefix = "support/";
         this.versionTagPrefix = "";
         this.origin = "origin";
@@ -116,6 +118,14 @@ public class GitFlowConfig {
      */
     public String getHotfixBranchPrefix() {
         return hotfixBranchPrefix;
+    }
+
+    public String getHotfixSpecificBranchPrefix() {
+        return hotfixSpecificBranchPrefix;
+    }
+
+    public void setHotfixSpecificBranchPrefix(String hotfixSpecificBranchPrefix) {
+        this.hotfixSpecificBranchPrefix = hotfixSpecificBranchPrefix;
     }
 
     /**

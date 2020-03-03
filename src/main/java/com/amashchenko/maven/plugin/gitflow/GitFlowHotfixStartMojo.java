@@ -71,6 +71,15 @@ public class GitFlowHotfixStartMojo extends AbstractGitFlowMojo {
     @Parameter(property = "useSnapshotInHotfix", defaultValue = "false")
     private boolean useSnapshotInHotfix;
 
+    @Parameter(property = "masterHotfix", defaultValue = "false")
+    private boolean masterHotfix;
+
+    @Parameter(property = "taskNumber")
+    private String taskNumber;
+
+    @Parameter(property = "taskDescription")
+    private String taskDescription;
+
     /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -201,9 +210,13 @@ public class GitFlowHotfixStartMojo extends AbstractGitFlowMojo {
 
             String hotfixBranchName = gitFlowConfig.getHotfixBranchPrefix()
                     + branchVersionPart;
-            if (!gitFlowConfig.getProductionBranch().equals(branchName)) {
-                hotfixBranchName = gitFlowConfig.getHotfixBranchPrefix()
-                        + branchName + "/" + branchVersionPart;
+            if (masterHotfix){
+                if (!gitFlowConfig.getProductionBranch().equals(branchName)) {
+                    hotfixBranchName = gitFlowConfig.getHotfixBranchPrefix()
+                            + branchName + "/" + branchVersionPart;
+                }
+            } else {
+                hotfixBranchName = gitFlowConfig.getHotfixSpecificBranchPrefix() + taskNumber.trim() + "_" + taskDescription.replace(" ", "_");
             }
 
             // git for-each-ref refs/heads/hotfix/...
