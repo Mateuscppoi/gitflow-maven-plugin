@@ -121,6 +121,9 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
     @Parameter(property = "skipMergeReleaseBranch", defaultValue = "false")
     private boolean skipMergeReleaseBranch = false;
 
+    @Parameter(property = "incrementDev", defaultValue = "false")
+    private boolean incrementDev = false;
+
     /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -278,11 +281,13 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
                 if (!skipMergeDevBranch) {
                     GitFlowVersionInfo developVersionInfo = new GitFlowVersionInfo(
                             currentVersion);
+                    String devVersion = null;
                     if (notSameProdDevName()) {
                         // git checkout develop
                         gitCheckout(gitFlowConfig.getDevelopmentBranch());
 
-                        developVersionInfo = new GitFlowVersionInfo(getCurrentProjectVersion());
+                        devVersion = getCurrentProjectVersion();
+                        developVersionInfo = new GitFlowVersionInfo(devVersion);
 
                         // set version to avoid merge conflict
                         mvnSetVersions(currentVersion);
@@ -303,9 +308,11 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
                         }
                     }
 
+                    String nextSnapshotVersion = devVersion;
                     // get next snapshot version
-                    final String nextSnapshotVersion = developVersionInfo.nextSnapshotVersion();
-
+                    if (incrementDev) {
+                        nextSnapshotVersion = developVersionInfo.nextSnapshotVersion();
+                    }
                     if (StringUtils.isBlank(nextSnapshotVersion)) {
                         throw new MojoFailureException(
                                 "Next snapshot version is blank.");
