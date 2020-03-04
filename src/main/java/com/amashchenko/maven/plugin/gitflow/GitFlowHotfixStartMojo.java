@@ -234,6 +234,10 @@ public class GitFlowHotfixStartMojo extends AbstractGitFlowMojo {
             // execute if version changed
             if (!version.equals(currentVersion)) {
                 String projectVersion = version;
+                if (!masterHotfix) {
+                    projectVersion = projectVersion + "-" + taskNumber;
+                }
+
                 if (useSnapshotInHotfix && !ArtifactUtils.isSnapshot(version)) {
                     projectVersion = version + "-" + Artifact.SNAPSHOT_VERSION;
                 }

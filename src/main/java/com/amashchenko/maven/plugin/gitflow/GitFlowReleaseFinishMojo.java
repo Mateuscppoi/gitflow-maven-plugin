@@ -159,6 +159,9 @@ public class GitFlowReleaseFinishMojo extends AbstractGitFlowMojo {
     @Parameter(property = "useSnapshotInRelease", defaultValue = "false")
     private boolean useSnapshotInRelease;
 
+    @Parameter(property = "useSnapshotInDevelop", defaultValue = "false")
+    private boolean useSnapshotInDevelop;
+
     /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -286,7 +289,7 @@ public class GitFlowReleaseFinishMojo extends AbstractGitFlowMojo {
 
                 // get develop version
                 final String developReleaseVersion = getCurrentProjectVersion();
-                if (commitDevelopmentVersionAtStart && useSnapshotInRelease || developReleaseVersion.contains("SNAPSHOT")) {
+                if (commitDevelopmentVersionAtStart && (useSnapshotInRelease || useSnapshotInDevelop)) {
                     // updating develop poms to master version to avoid merge conflicts
                     mvnSetVersions(currentVersion);
 
@@ -298,7 +301,7 @@ public class GitFlowReleaseFinishMojo extends AbstractGitFlowMojo {
                 gitMerge(releaseBranch, releaseRebase, releaseMergeNoFF, false,
                         commitMessages.getReleaseFinishDevMergeMessage(), messageProperties);
 
-                if (commitDevelopmentVersionAtStart && useSnapshotInRelease || developReleaseVersion.contains("SNAPSHOT")) {
+                if (commitDevelopmentVersionAtStart && (useSnapshotInRelease || useSnapshotInDevelop)) {
                     // updating develop poms version back to pre merge state
                     mvnSetVersions(developReleaseVersion);
 
