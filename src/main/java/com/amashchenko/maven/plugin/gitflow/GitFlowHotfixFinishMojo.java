@@ -145,6 +145,8 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
                                     + "' doesn't exist. Cannot finish hotfix.");
                 }
                 hotfixBranchName = branch;
+            } else if (hasOnlyOneHotfixBranch()) {
+                hotfixBranchName = gitFindBranches(gitFlowConfig.getHotfixBranchPrefix(), true);
             }
 
             if (StringUtils.isBlank(hotfixBranchName)) {
@@ -342,7 +344,7 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
                 } else {
                     gitPush(gitFlowConfig.getProductionBranch(), !skipTag);
 
-                    if (!skipMergeReleaseBranch) {
+                    if (!skipMergeReleaseBranch && StringUtils.isNotBlank(releaseBranch)) {
                         gitPush(releaseBranch, !skipTag);
                     }
                     if (!skipMergeDevBranch
@@ -368,6 +370,11 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
         } catch (Exception e) {
             throw new MojoFailureException("hotfix-finish", e);
         }
+    }
+
+    private boolean hasOnlyOneHotfixBranch() throws CommandLineException, MojoFailureException {
+        String branch = gitFindBranches(gitFlowConfig.getHotfixBranchPrefix(), true);
+        return StringUtils.isNotBlank(branch);
     }
 
     private String promptBranchName() throws MojoFailureException, CommandLineException {

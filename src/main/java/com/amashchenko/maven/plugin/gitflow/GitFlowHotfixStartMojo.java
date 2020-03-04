@@ -94,6 +94,14 @@ public class GitFlowHotfixStartMojo extends AbstractGitFlowMojo {
 
             String branchName = gitFlowConfig.getProductionBranch();
 
+            final String hotfixBranch = gitFindBranches(
+                    gitFlowConfig.getHotfixBranchPrefix(), true);
+
+            if (masterHotfix && StringUtils.isNotEmpty(hotfixBranch)) {
+                throw new MojoFailureException(
+                        "Hotfix branch already exists. Finish that hotfix first.");
+            }
+
             // find support branches
             final String supportBranchesStr = gitFindBranches(gitFlowConfig.getSupportBranchPrefix(), false);
 
